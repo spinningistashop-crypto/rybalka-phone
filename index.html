@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Код Спиннингиста</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Спиннингист">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a1311">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="phone.css">
+<script>
+(function(){var k='rybalka-phone-theme',s=null;try{s=localStorage.getItem(k)}catch(e){}
+var t=(s==='light'||s==='dark')?s:((window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark');
+document.documentElement.setAttribute('data-theme',t);})();
+</script>
+</head>
+<body>
+<header class="top">
+  <h1 class="brand">Код Спиннингиста</h1>
+  <button id="themeBtn" class="icon" title="Тема">🌙</button>
+</header>
+
+<main>
+  <!-- ===== Запись ===== -->
+  <section id="view-new" class="view active">
+    <div id="editBanner" class="banner hidden"><span>Редактирование выезда</span><button id="cancelEdit" class="link">отменить</button></div>
+    <div class="card">
+      <label>Дата<input type="date" id="fDate"></label>
+      <div class="field-title">Условия</div>
+      <div class="seg" id="fCond"></div>
+      <label>Водоём<select id="fWater"></select></label>
+      <input id="fWaterNew" class="hidden" placeholder="Название нового водоёма">
+      <label>Место (необязательно)<select id="fSpot"></select></label>
+      <input id="fSpotNew" class="hidden" placeholder="Название нового места">
+    </div>
+    <div id="catches"></div>
+    <button id="addCatch" class="btn ghost wide">＋ Ещё улов</button>
+    <button id="saveTrip" class="btn primary wide">Сохранить выезд</button>
+    <p class="hint center">Записи хранятся на телефоне. Дома отправь их на Mac во вкладке «Выезды».</p>
+  </section>
+
+  <!-- ===== Выезды ===== -->
+  <section id="view-list" class="view">
+    <div class="card">
+      <button id="sendBtn" class="btn primary wide">📤 Отправить на Mac</button>
+      <p class="hint" id="sendHint"></p>
+    </div>
+    <div id="pendingBox"></div>
+    <div id="sentBox"></div>
+  </section>
+
+  <!-- ===== Ещё ===== -->
+  <section id="view-more" class="view">
+    <div class="card">
+      <h3>Справочник</h3>
+      <p id="catStatus" class="hint"></p>
+      <label class="btn ghost wide filebtn">📂 Загрузить файл справочника<input type="file" id="catFile" accept=".json,application/json" hidden></label>
+      <details class="paste"><summary>Вставить текстом (через «Универсальный буфер»)</summary>
+        <textarea id="catText" rows="4" placeholder="Вставь сюда содержимое справочника"></textarea>
+        <button id="catTextBtn" class="btn ghost wide">Загрузить из текста</button>
+      </details>
+    </div>
+    <div class="card">
+      <h3>Как пользоваться</h3>
+      <ol class="help">
+        <li>На Mac: приложение → «Добавить улов» → вкладка «Данные» → «Справочник для телефона». Передай файл на iPhone по AirDrop и сохрани в «Файлы».</li>
+        <li>Здесь: «Ещё» → «Загрузить файл справочника».</li>
+        <li>На берегу: вкладка «Запись». Интернет не нужен.</li>
+        <li>Дома: «Выезды» → «Отправить на Mac» → AirDrop. На Mac: «Данные» → «Записи с телефона».</li>
+        <li>После загрузки на Mac нажми «Загрузил — убрать отправленные».</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>О приложении</h3>
+      <p class="hint" id="aboutInfo"></p>
+    </div>
+  </section>
+</main>
+
+<nav class="bar">
+  <button data-view="new" class="active"><span>➕</span>Запись</button>
+  <button data-view="list"><span>📋</span>Выезды<i id="badge" class="badge hidden">0</i></button>
+  <button data-view="more"><span>⚙️</span>Ещё</button>
+</nav>
+<div id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
