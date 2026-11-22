@@ -28,6 +28,18 @@ document.documentElement.setAttribute('data-theme',t);})();
 <main>
   <!-- ===== Запись ===== -->
   <section id="view-new" class="view active">
+    <div id="catBanner" class="card warn hidden">
+      <b>⚠️ Справочник не загружен</b>
+      <p class="hint">Без него нет списков водоёмов и мест и подсказок по приманкам и рыбе — придётся вводить всё руками. Загрузи справочник из приложения на Mac:</p>
+      <label class="btn primary wide filebtn">📂 Выбрать файл справочника<input type="file" class="vh cat-file"></label>
+      <button class="btn ghost wide cat-paste" type="button">📋 Вставить из буфера</button>
+      <button class="link" id="catHelp" type="button">Как получить справочник?</button>
+    </div>
+    <div id="safariBanner" class="card hidden">
+      <b>ℹ️ Страница открыта в Safari</b>
+      <p class="hint">Добавь её на экран «Домой» (Поделиться → «На экран «Домой»») и дальше пользуйся значком. У Safari и у значка память раздельная: справочник и записи нужно загружать именно в значке.</p>
+      <button class="link" id="safariOk" type="button">Понятно</button>
+    </div>
     <div id="editBanner" class="banner hidden"><span>Редактирование выезда</span><button id="cancelEdit" class="link">отменить</button></div>
     <div class="card">
       <label>Дата<input type="date" id="fDate"></label>
@@ -59,17 +71,19 @@ document.documentElement.setAttribute('data-theme',t);})();
     <div class="card">
       <h3>Справочник</h3>
       <p id="catStatus" class="hint"></p>
-      <label class="btn ghost wide filebtn">📂 Загрузить файл справочника<input type="file" id="catFile" accept=".json,application/json" hidden></label>
-      <details class="paste"><summary>Вставить текстом (через «Универсальный буфер»)</summary>
-        <textarea id="catText" rows="4" placeholder="Вставь сюда содержимое справочника"></textarea>
-        <button id="catTextBtn" class="btn ghost wide">Загрузить из текста</button>
-      </details>
+      <label class="btn primary wide filebtn">📂 Загрузить файл справочника<input type="file" class="vh cat-file"></label>
+      <button class="btn ghost wide cat-paste" type="button">📋 Вставить из буфера</button>
+      <p class="hint">Если «Вставить из буфера» не сработало, вставь текст сюда вручную:</p>
+      <textarea id="catText" rows="3" placeholder="Вставь сюда текст справочника"></textarea>
+      <button id="catTextBtn" class="btn ghost wide">Загрузить из текста</button>
     </div>
     <div class="card">
       <h3>Как пользоваться</h3>
       <ol class="help">
-        <li>На Mac: приложение → «Добавить улов» → вкладка «Данные» → «Справочник для телефона». Передай файл на iPhone по AirDrop и сохрани в «Файлы».</li>
-        <li>Здесь: «Ещё» → «Загрузить файл справочника».</li>
+        <li>На Mac: приложение → «Добавить улов» → вкладка «Данные» → «📱 Телефон». Два способа передать справочник:<br>
+          <b>а) через буфер:</b> нажми «📋 Скопировать справочник» на Mac, а здесь «Вставить из буфера» (нужен один Apple ID и Wi-Fi/Bluetooth на обоих устройствах);<br>
+          <b>б) файлом:</b> «⬇ Справочник для телефона» → AirDrop на iPhone → «Сохранить в Файлы» → здесь «Выбрать файл справочника».</li>
+        <li>Делай это в приложении со значка на экране «Домой», а не во вкладке Safari.</li>
         <li>На берегу: вкладка «Запись». Интернет не нужен.</li>
         <li>Дома: «Выезды» → «Отправить на Mac» → AirDrop. На Mac: «Данные» → «Записи с телефона».</li>
         <li>После загрузки на Mac нажми «Загрузил — убрать отправленные».</li>

@@ -71,3 +71,8 @@ input[type=date]{min-height:48px;}
 .help{padding-left:20px; margin:0; font-size:14px; color:var(--dim);} .help li{margin-bottom:8px;}
 .paste{margin-top:10px;} .paste summary{color:var(--accent); font-size:14px; margin-bottom:8px;}
 textarea{margin-bottom:10px;}
+
+.vh{position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none;}
+.filebtn{position:relative;}
+.card.warn{border-color:var(--accent);}
+.card.warn b{color:var(--bright);}

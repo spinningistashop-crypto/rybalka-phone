@@ -1,6 +1,6 @@
 'use strict';
 /* Код Спиннингиста — запись уловов на телефоне. Работает без интернета, всё хранится на телефоне. */
-const APP_VERSION = '1.0';
+const APP_VERSION = '1.1';
 const FORMAT_PHONE = 'rybalka-phone-v1';
 const FORMAT_CATALOG = 'rybalka-catalog-v1';
 const CONDS = ['С берега', 'С лодки', 'Со льда'];
@@ -48,6 +48,7 @@ let editingUid = null;       // какой выезд сейчас правим
 let cond = CONDS[0];
 let recent = [];             // недавно использованные приманки
 let prepared = null;         // заранее собранный файл для отправки
+let storageOk = null;        // проверка, что телефон сохраняет данные
 
 function toast(msg, isErr) {
   const t = $('#toast');
@@ -105,7 +106,7 @@ async function setCatalog(obj, silent) {
   await kvSet('catalog', obj);
   fillWater();
   $$('#catches .catch').forEach(refreshSpecies);
-  renderMore();
+  renderMore(); updateBanners();
   if (!silent) toast(`Справочник загружен: водоёмов ${obj.waters.length}, приманок ${obj.lures.length}`);
 }
 
@@ -432,21 +433,48 @@ function renderMore() {
   $('#catStatus').textContent = catalog
     ? `Загружен ${catalog.exported_at ? fmtDate(catalog.exported_at.slice(0, 10)) : ''}: водоёмов ${catalog.waters.length}, мест ${catalog.spots.length}, приманок ${catalog.lures.length}, видов ${catalog.species.length}.`
     : 'Справочник ещё не загружен. Без него можно вводить названия вручную, но с ним быстрее и без опечаток.';
-  $('#aboutInfo').textContent = `Версия ${APP_VERSION}. Записи хранятся только на этом телефоне, пока ты не отправишь их на Mac.`;
+  $('#aboutInfo').textContent = `Версия ${APP_VERSION}. ${isStandalone() ? 'Открыто со значка.' : 'Открыто в Safari (лучше со значка на экране «Домой»).'} `
+    + `Хранилище телефона: ${storageOk === null ? 'проверяю…' : storageOk ? 'работает' : 'НЕ РАБОТАЕТ — записи не сохранятся'}. `
+    + 'Записи хранятся только на этом телефоне, пока ты не отправишь их на Mac.';
 }
-$('#catFile').addEventListener('change', async e => {
+function parseCatalogText(t) {
+  try { return JSON.parse(String(t).trim()); }
+  catch (e) { throw new Error('Не удалось прочитать справочник: нужен текст/файл «Справочник для телефона» из приложения на Mac.'); }
+}
+$$('.cat-file').forEach(inp => inp.addEventListener('change', async e => {
   const f = e.target.files[0]; if (!f) return;
-  try { await setCatalog(JSON.parse(await f.text())); } catch (err) { toast(err.message || 'Не удалось прочитать файл', true); }
+  try { await setCatalog(parseCatalogText(await f.text())); } catch (err) { toast(err.message || 'Не удалось прочитать файл', true); }
   e.target.value = '';
-});
+}));
+$$('.cat-paste').forEach(b => b.addEventListener('click', async () => {
+  try {
+    const t = await navigator.clipboard.readText();
+    await setCatalog(parseCatalogText(t));
+  } catch (err) {
+    if (err && /справочник/i.test(err.message || '')) { toast(err.message, true); return; }
+    toast('Не удалось прочитать буфер обмена. Открой «Ещё» и вставь текст справочника вручную.', true);
+    showView('more'); setTimeout(() => $('#catText').focus(), 200);
+  }
+}));
 $('#catTextBtn').addEventListener('click', async () => {
-  try { await setCatalog(JSON.parse($('#catText').value)); $('#catText').value = ''; } catch (err) { toast('Не получилось: ' + (err.message || 'нужен текст справочника'), true); }
+  try { await setCatalog(parseCatalogText($('#catText').value)); $('#catText').value = ''; } catch (err) { toast(err.message || 'Не получилось', true); }
 });
+$('#catHelp').addEventListener('click', () => showView('more'));
+const isStandalone = () => window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+async function updateBanners() {
+  $('#catBanner').classList.toggle('hidden', !!catalog);
+  let hide = false; try { hide = !!(await kvGet('hideSafari')); } catch (e) {}
+  $('#safariBanner').classList.toggle('hidden', isStandalone() || hide);
+}
+$('#safariOk').addEventListener('click', async () => { try { await kvSet('hideSafari', 1); } catch (e) {} updateBanners(); });
 
 /* ------------------------------ запуск ------------------------------ */
 (async function init() {
   paintThemeBtn(); initCond();
   $('#fDate').value = todayIso();
+  try {
+    await kvSet('ping', Date.now()); storageOk = true;
+  } catch (err) { storageOk = false; toast('Телефон не даёт сохранять данные в этом режиме: ' + err.message, true); }
   try {
     catalog = await kvGet('catalog') || null;
     recent = await kvGet('recent') || [];
@@ -460,7 +488,7 @@ $('#catTextBtn').addEventListener('click', async () => {
     }
   } catch (err) { toast('Не удалось открыть хранилище телефона: ' + err.message, true); fillWater(); }
   addCatch();
-  updateBadge(); renderMore();
+  updateBadge(); renderMore(); updateBanners();
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 })();

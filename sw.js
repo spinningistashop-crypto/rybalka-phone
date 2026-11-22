@@ -1,5 +1,5 @@
 /* Офлайн-режим: страница и все её файлы сохраняются на телефоне при первом открытии. */
-const CACHE = 'rybalka-phone-v1';
+const CACHE = 'rybalka-phone-v2';
 const ASSETS = ['./', './index.html', './app.js', './phone.css', './manifest.webmanifest',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png', './Lora-Italic.ttf'];
 
