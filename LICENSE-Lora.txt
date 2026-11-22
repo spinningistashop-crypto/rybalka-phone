@@ -1,8 +1,0 @@
-Шрифт Lora (static/fonts/Lora.ttf, Lora-Italic.ttf)
-
-Copyright 2011 The Lora Project Authors (https://github.com/cyrealtype/Lora-Cyrillic), with Reserved Font Name "Lora".
-
-Лицензия: This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: https://scripts.sil.org/OFL
-https://scripts.sil.org/OFL
-
-Шрифт распространяется под лицензией SIL Open Font License 1.1; полный текст: https://openfontlicense.org
